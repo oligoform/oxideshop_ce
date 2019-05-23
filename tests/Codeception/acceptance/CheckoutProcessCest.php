@@ -6,6 +6,7 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Codeception;
 
+use Codeception\Util\Fixtures;
 use OxidEsales\Codeception\Step\Basket;
 use OxidEsales\Codeception\Module\Translation\Translator;
 
@@ -148,6 +149,71 @@ class CheckoutProcessCest
         //cleanUp data
         $I->updateInDatabase('oxarticles', ["oxstock" => '15', "oxstockflag" => '1'], ["oxid" => '1000']);
 
+    }
+
+    /**
+     * @group basketfrontend
+     *
+     * @param AcceptanceTester $I
+     */
+    public function checkMinimalOrderPrice(AcceptanceTester $I)
+    {
+        $I->wantToTest('minimal order price in checkout process (min order sum is 49 €)');
+
+        // prepare data for test
+        $I->updateInDatabase('oxdelivery', ["OXTITLE_1" => 'OXTITLE'], ["OXTITLE_1" => '']);
+        $I->updateInDatabase('oxdiscount', ["OXACTIVE" => 1], ["OXID" => 'testcatdiscount']);
+
+      /*  $discountData = Fixtures::get('testcatdiscount');
+        $I->haveInDatabase('oxdiscount', $discountData['oxdiscount']);
+        foreach ($discountData['oxobject2discount'] as $discountRelation) {
+            $I->haveInDatabase('oxobject2discount', $discountRelation);
+        }*/
+        $I->updateConfigInDatabase('iMinOrderPrice', '49', 'str');
+        /*$voucherData = Fixtures::get('testvoucher4');
+        $I->haveInDatabase('oxvoucherseries', $voucherData['oxvoucherseries']);
+        foreach ($voucherData['oxvouchers'] as $voucher) {
+            $I->haveInDatabase('oxvouchers', $voucher);
+        }*/
+
+        $productData = [
+            'id' => 1000,
+            'title' => 'Test product 0 [EN] šÄßüл',
+            'amount' => 1,
+            'totalPrice' => '50,00 €'
+        ];
+
+        $userData = $this->getExistingUserData();
+
+        $homePage = $I->openShop();
+
+        //add Product to basket
+        $basket = new Basket($I);
+        $basket->addProductToBasket($productData['id'], 1);
+        $basketPage = $homePage->openMiniBasket()
+            ->openBasketDisplay()
+            ->seeBasketContains([$productData], '50,00 €');
+        $I->dontSee(Translator::translate('MIN_ORDER_PRICE') . ' 49,00 €');
+        $I->see(Translator::translate('CONTINUE_TO_NEXT_STEP'));
+
+        $basketPage = $basketPage->loginUser($userData['userLoginName'], $userData['userPassword']);
+        $I->see(Translator::translate('MIN_ORDER_PRICE') . ' 49,00 €');
+        $I->dontSee(Translator::translate('CONTINUE_TO_NEXT_STEP'));
+
+        $basketPage = $basketPage->updateProductAmount(2);
+        $I->dontSee(Translator::translate('MIN_ORDER_PRICE') . ' 49,00 €');
+        $I->see(Translator::translate('CONTINUE_TO_NEXT_STEP'));
+
+        $basketPage = $basketPage->addCouponToBasket('123123');
+        $I->see(Translator::translate('MIN_ORDER_PRICE') . ' 49,00 €');
+        $I->dontSee(Translator::translate('CONTINUE_TO_NEXT_STEP'));
+
+        $basketPage = $basketPage->removeCouponFromBasket();
+        $I->dontSee(Translator::translate('MIN_ORDER_PRICE') . ' 49,00 €');
+        $userCheckoutPage = $basketPage->goToNextStep();
+        $breadCrumbName = Translator::translate("ADDRESS");
+        $userCheckoutPage->seeOnBreadCrumb($breadCrumbName);
+        $I->updateInDatabase('oxdiscount', ["OXACTIVE" => 0], ["OXID" => 'testcatdiscount']);
     }
 
     /**

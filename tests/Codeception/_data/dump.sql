@@ -114,3 +114,18 @@ UPDATE oxuser
       oxpassword = '6cb4a34e1b66d3445108cd91b67f98b9',
       oxpasssalt = '6631386565336161636139613634663766383538633566623662613036636539'
   WHERE OXUSERNAME='admin';
+
+REPLACE INTO `oxdiscount` (`OXID`,            `OXSHOPID`,  `OXACTIVE`, `OXTITLE`,                          `OXTITLE_1`,             `OXAMOUNT`, `OXAMOUNTTO`, `OXPRICETO`, `OXPRICE`, `OXADDSUMTYPE`, `OXADDSUM`, `OXITMARTID`, `OXITMAMOUNT`, `OXITMMULTIPLE`, `OXSORT`) VALUES
+                         ('testcatdiscount', 1, 0,         'discount for category [DE] šÄßüл', 'discount for category [EN] šÄßüл',  1,          999999,       0,           0,        'abs',           5,         '',            0,             0,               100);
+
+#object2discount
+REPLACE INTO `oxobject2discount` (`OXID`,                        `OXDISCOUNTID`,    `OXOBJECTID`,                 `OXTYPE`) VALUES
+                                ('fa647a823ce118996.58546955',  'testcatdiscount', 'a7c40f631fc920687.20179984', 'oxcountry'),
+                                ('fa647a823d5079104.99115703',  'testcatdiscount', 'testcategory0',              'oxcategories');
+
+#Coupons demodata
+REPLACE INTO `oxvoucherseries` (`OXID`,         `OXSHOPID`,   `OXSERIENR`,           `OXSERIEDESCRIPTION`,      `OXDISCOUNT`, `OXDISCOUNTTYPE`, `OXBEGINDATE`,         `OXENDDATE`,          `OXALLOWSAMESERIES`, `OXALLOWOTHERSERIES`, `OXALLOWUSEANOTHER`, `OXMINIMUMVALUE`, `OXCALCULATEONCE`) VALUES
+                              ('testvoucher4', 1, '4 Coupon šÄßüл',      '4 Coupon šÄßüл',           50.00,       'percent',        '2008-01-01 00:00:00', '2020-01-01 00:00:00', 0,                   0,                    0,                   45.00,            1);
+
+REPLACE INTO `oxvouchers` (`OXDATEUSED`, `OXRESERVED`, `OXVOUCHERNR`, `OXVOUCHERSERIEID`, `OXID`) VALUES
+                         ('0000-00-00',  0,           '123123',      'testvoucher4',     'testcoucher011');
