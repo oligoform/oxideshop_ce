@@ -733,6 +733,9 @@ class ProductDetailsPageCest
             ->addProductToBasket(5)
             ->openBasket();
 
+        $breadCrumbName = Translator::translate("CART");
+        $basketPage->seeOnBreadCrumb($breadCrumbName);
+
         //amount price discount added to the C price
         $productData = [
             'id' => 1000,
