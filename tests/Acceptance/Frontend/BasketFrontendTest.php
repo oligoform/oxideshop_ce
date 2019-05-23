@@ -12,47 +12,6 @@ use OxidEsales\EshopCommunity\Tests\Acceptance\FrontendTestCase;
 class BasketFrontendTest extends FrontendTestCase
 {
     /**
-     * Testing min order sum
-     *
-     * @group basketfrontend
-     */
-    public function testFrontendMinOrderSum()
-    {
-        //TODO: Selenium refactor to remove SQL's executions
-        $this->executeSql("UPDATE `oxdelivery` SET `OXTITLE_1` = `OXTITLE` WHERE `OXTITLE_1` = '';");
-        $this->addToBasket( "1000" );
-
-        //min order sum is 49 €
-        //when user is not logged in, default s&h are calculated and no discount applied. sum total is > 49 €
-        $this->assertElementPresent("//button[text()='%CONTINUE_TO_NEXT_STEP%']");
-        $this->assertTextNotPresent("%MIN_ORDER_PRICE% 49,00 €");
-
-        //when user logs in, discount is applied and sum total is < 49. order not allowed
-        $this->loginInFrontend("example_test@oxid-esales.dev", "useruser");
-        $this->assertElementNotPresent("//button[text()='%CONTINUE_TO_NEXT_STEP%']");
-        $this->assertTextPresent("%MIN_ORDER_PRICE% 49,00");
-
-        //when buying 2 items, and amount is > 49 and order is allowed
-        $this->type("am_1", "2");
-        $this->clickAndWait("basketUpdate");
-        $this->assertTextNotPresent("%MIN_ORDER_PRICE% 49,00 €");
-
-        //voucher affects order min.sum calculation
-        $this->type("voucherNr", "123123");
-        $this->clickAndWait("//button[text()='%SUBMIT_COUPON%']");
-        $this->assertTextPresent("%MIN_ORDER_PRICE% 49,00 €");
-        //removing voucher
-        $this->clickAndWait("//div[@id='basketSummary']//a[text()='%REMOVE%']");
-        $this->assertTextNotPresent("%MIN_ORDER_PRICE% 49,00 €");
-
-        //checking if order step2 is loaded correctly
-        $this->_continueToNextStep();
-
-        $this->assertElementPresent("oxStateSelect_invadr[oxuser__oxstateid]");
-        $this->assertEquals("on", $this->getValue("showShipAddress"));
-    }
-
-    /**
      * Checking VAT displaying for all additional products in 1st order step
      *
      * @group basketfrontend

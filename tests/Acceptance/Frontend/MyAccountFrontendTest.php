@@ -11,64 +11,6 @@ use OxidEsales\EshopCommunity\Tests\Acceptance\FrontendTestCase;
 /** My account related tests */
 class MyAccountFrontendTest extends FrontendTestCase
 {
-
-    /**
-     * creating listmania
-     *
-     * @group myAccount
-     */
-    public function testListmaniaCreating()
-    {
-        //deleting existing recommlists for better possibility to test creating of new recomlist
-        $aRecommListParams = array("OXTITLE" => 'Kite-Equipment');
-        $this->callShopSC("oxRecommList", "delete", "e7a0b1906e0d94e05693f06b0b6fcc32", $aRecommListParams);
-        $aRecommListParams = array("OXTITLE" => 'recomm title');
-        $this->callShopSC("oxRecommList", "delete", "testrecomm", $aRecommListParams);
-        $this->clearCache();
-        $this->openShop();
-        $this->loginInFrontend("example_test@oxid-esales.dev", "useruser");
-
-        $this->openArticle( 1000 );
-        $this->waitForItemDisappear("recommList");
-        $this->click("productLinks");
-        $this->waitForItemAppear("recommList");
-        $this->clickAndWait("recommList");
-
-        $this->assertEquals("Test product 0 [EN] šÄßüл", $this->getText("//h1"));
-        $this->assertTextPresent("%NO_LISTMANIA_LIST%click here.");
-        $this->clickAndWait("//section[@id='content']/a[text()='%CLICK_HERE%']");
-        //creating listmania in MyAccount
-        $this->assertEquals("%MY_LISTMANIA%", $this->getText("//aside[@id='sidebar']/ul/li[8]"));
-        $this->assertEquals("%PAGE_TITLE_ACCOUNT_RECOMMLIST%", $this->getText("//h1"));
-        $this->assertEquals("", $this->getValue("recomm_title"));
-        $this->assertEquals("UserNamešÄßüл UserSurnamešÄßüл", $this->getValue("recomm_author"));
-        $this->assertEquals("", $this->getValue("recomm_desc"));
-        $this->assertTextPresent("%NO_LISTMANIA_LIST_FOUND%");
-        $this->type("recomm_title", "recomm title1");
-        $this->type("recomm_author", "recomm author1");
-        $this->type("recomm_desc", "recom introduction1");
-        $this->clickAndWait("//section[@id='content']//button[text()='%SAVE%']");
-        $this->assertTextPresent("%LISTMANIA_LIST_SAVED%");
-        $this->clickAndWait("//aside[@id='sidebar']//a[text()='%MY_LISTMANIA%']");
-        $this->assertEquals("recomm title1", $this->getText("//section[@id='content']//ul[@id='recommendationsLists']/li[1]/div/div/a"));
-        $this->assertElementPresent("//section[@id='content']//ul[@id='recommendationsLists']/li[1]//button[@name='deleteList']");
-        $this->assertElementPresent("//section[@id='content']//ul[@id='recommendationsLists']/li[1]//button[@name='editList']");
-        $this->assertEquals("recom introduction1", $this->getText("//ul[@id='recommendationsLists']/li[1]/div/div[2]"));
-        $this->assertTextPresent("recomm title1 : %LIST_BY% recomm author1");
-        $this->clickAndWait("link=recomm title1");
-
-        $this->assertElementPresent("breadCrumb");
-        $this->assertEquals("%YOU_ARE_HERE%: / %MY_ACCOUNT% / %PAGE_TITLE_ACCOUNT_RECOMMLIST%", $this->getText("breadCrumb"));
-        $this->assertEquals("%PAGE_TITLE_ACCOUNT_RECOMMLIST%", $this->getHeadingText("//h1"));
-
-        $this->click("servicesTrigger");
-        $this->waitForItemAppear("services");
-        $this->clickAndWAit("//ul[@id='services']/li[2]/a");
-        $this->assertEquals("%PAGE_TITLE_ACCOUNT% - \"example_test@oxid-esales.dev\"", $this->getText("//h1"));
-        $this->assertEquals("%MY_LISTMANIA%", $this->getText("//section[@id='content']//div[2]/dl[4]/dt"));
-        $this->assertEquals("%LISTS%: 1", $this->getText("//section[@id='content']//div[2]/dl[4]/dd"));
-    }
-
     /**
      * Checking Listmania
      *

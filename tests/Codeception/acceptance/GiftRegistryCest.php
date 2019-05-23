@@ -53,7 +53,7 @@ class GiftRegistryCest
         $I->see(Translator::translate('MY_GIFT_REGISTRY'), $userAccountPage->dashboardGiftRegistryPanelHeader);
         $I->see(Translator::translate('PRODUCT').' 1', $userAccountPage->dashboardGiftRegistryPanelContent);
 
-        $userAccountPage = $userAccountPage->logoutUser()
+        $userAccountPage = $userAccountPage->logoutUserInAccountPage()
             ->login($userData['userLoginName'], $userData['userPassword']);
         $I->see(Translator::translate('MY_GIFT_REGISTRY'), $userAccountPage->dashboardGiftRegistryPanelHeader);
         $I->see(Translator::translate('PRODUCT').' 1', $userAccountPage->dashboardGiftRegistryPanelContent);

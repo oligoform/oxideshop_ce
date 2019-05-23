@@ -50,7 +50,7 @@ class WishListCest
         $I->see(Translator::translate('MY_WISH_LIST'));
         $I->see(Translator::translate('PRODUCT').' 1');
 
-        $userAccountPage->logoutUser()->login($userData['userLoginName'], $userData['userPassword']);
+        $userAccountPage->logoutUserInAccountPage()->login($userData['userLoginName'], $userData['userPassword']);
         $I->see(Translator::translate('MY_WISH_LIST'));
         $I->see(Translator::translate('PRODUCT').' 1');
 

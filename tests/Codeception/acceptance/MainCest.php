@@ -35,6 +35,7 @@ class MainCest
 
         // open category
         $I->click('Test category 0 [EN] šÄßüл', '#navigation');
+        $I->waitForElement('h1', 10);
         $I->see('Test category 0 [EN] šÄßüл', 'h1');
 
         // check if subcategory exists

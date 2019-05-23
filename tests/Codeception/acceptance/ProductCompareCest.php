@@ -44,7 +44,7 @@ class ProductCompareCest
         $I->see(Translator::translate('MY_PRODUCT_COMPARISON'));
         $I->see(Translator::translate('PRODUCT').' 1');
 
-        $userAccountPage = $userAccountPage->logoutUser()
+        $userAccountPage = $userAccountPage->logoutUserInAccountPage()
             ->login($userData['userLoginName'], $userData['userPassword']);
         $I->see(Translator::translate('MY_PRODUCT_COMPARISON'));
         $I->see(Translator::translate('PRODUCT').' 1');
