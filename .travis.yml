@@ -8,6 +8,7 @@ notifications:
 php:
   - "7.1"
   - "7.2"
+  - "7.3"
 
 matrix:
   fast_finish: true
@@ -62,5 +63,5 @@ before_script:
   - SHOP_PATH='source' SHOP_TESTS_PATH='tests' MODULES_PATH='' composer install
 
 script:
-  - vendor/bin/oe-eshop-phpcs_with_thresholds
-  - vendor/bin/runtests
+  - php vendor/bin/oe-eshop-phpcs_with_thresholds
+  - php vendor/bin/runtests
