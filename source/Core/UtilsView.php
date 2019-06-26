@@ -361,8 +361,7 @@ class UtilsView extends \OxidEsales\Eshop\Core\Base
         $smarty->default_template_handler_func = [\OxidEsales\Eshop\Core\Registry::getUtilsView(), '_smartyDefaultTemplateHandler'];
 
         $smarty->plugins_dir = array_merge(
-            $this->getModuleSmartyPluginDirectories(),
-            $this->getShopSmartyPluginDirectories(),
+            $this->getSmartyPluginDirectories(),
             $smarty->plugins_dir
         );
 
@@ -399,6 +398,19 @@ class UtilsView extends \OxidEsales\Eshop\Core\Base
             $smarty->security_settings['ALLOW_CONSTANTS'] = true;
             $smarty->secure_dir = $smarty->template_dir;
         }
+    }
+
+    /**
+     * Returns all Smarty plugins including defined in modules
+     *
+     * @return array
+     */
+    public function getSmartyPluginDirectories()
+    {
+        return array_merge(
+            $this->getModuleSmartyPluginDirectories(),
+            $this->getShopSmartyPluginDirectories()
+        );
     }
 
     /**
