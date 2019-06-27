@@ -116,18 +116,9 @@ class ProductCompareCest
 
         //open compare list page
         $comparePage = $detailsPage->openProductComparePage();
-
-        // TODO: refactor
-        $I->seeElement("#compareRight_1000");
-        $I->seeElement("#compareRight_1001");
-        $I->seeElement("#compareLeft_10014");
         $comparePage->seeProductData($productData1, 1);
         $comparePage->seeProductData($productData2, 2);
         $comparePage->seeProductData($productData3, 3);
-
-        // TODO: add variant assertion
-        //$this->assertEquals("selvar1 [EN] šÄßüл +1,00 € selvar2 [EN] šÄßüл selvar3 [EN] šÄßüл -2,00 € selvar4 [EN] šÄßüл +2%", $I->clearString($this->getText("//div[@id='compareSelections_2']//ul")));
-        //$this->assertEquals("var1 [EN] šÄßüл var2 [EN] šÄßüл", $I->clearString($this->getText("//div[@id='compareVariantSelections_3']//ul")));
 
         //open product details page
         $detailsPage = $comparePage->openProductDetailsPage(1);
@@ -157,8 +148,6 @@ class ProductCompareCest
 
         $comparePage->removeProductFromList($productData1['id']);
         $comparePage->removeProductFromList($productData2['id']);
-        //TODO: is not working with flow theme anymore
-        //$I->see(Translator::translate('MESSAGE_SELECT_MORE_PRODUCTS'));
         $comparePage->removeProductFromList($productData3['id']);
         $I->see(Translator::translate('MESSAGE_SELECT_AT_LEAST_ONE_PRODUCT'));
 

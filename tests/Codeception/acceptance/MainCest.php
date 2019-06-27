@@ -20,8 +20,6 @@ class MainCest
     }
 
     /**
-     * TODO: Should it be without translations?
-     *
      * @param AcceptanceTester $I
      */
     public function shopBrowsing(AcceptanceTester $I)

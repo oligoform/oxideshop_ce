@@ -28,7 +28,6 @@ class ProductDetailsPageCest
             'price' => '100,00 € *'
         ];
 
-        // TODO: belongs to search functionality
         $searchListPage = $I->openShop()
             ->searchFor('100')
             ->seeProductData($productData, 2);
@@ -443,7 +442,7 @@ class ProductDetailsPageCest
         $detailsPage->seeMiniBasketContains([$basketItem], '30,00 €', 2);
     }
 
-    //TODO: move to productList
+    //TODO: move to productList when it will be created
     /**
      * @group productList
      * @group productVariants
@@ -470,7 +469,6 @@ class ProductDetailsPageCest
         $detailsPage->seeProductData($productData);
     }
 
-    //TODO: Do we really need this test?
     /**
      * @group main
      *

@@ -274,8 +274,6 @@ class UserAccountCest
             ->enterShippingAddressData($deliveryAddressData)
             ->saveAddress()
             ->validateUserDeliveryAddress($deliveryAddressData, 1);
-
-        //TODO: delete existing delivery address
     }
 
     private function getExistingUserData()

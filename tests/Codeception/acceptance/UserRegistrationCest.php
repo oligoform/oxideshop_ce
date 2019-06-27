@@ -113,7 +113,6 @@ class UserRegistrationCest
         $paymentPage->selectPayment('oxidcashondel');
         $orderPage = $paymentPage->goToNextStep();
 
-        // TODO: where to check it?
         $orderPage->validateUserBillingAddress(array_merge($addressData, $userData, $userLoginData));
         $orderPage->validateUserDeliveryAddress($deliveryAddressData);
 
@@ -155,7 +154,6 @@ class UserRegistrationCest
         $paymentPage->selectPayment('oxidcashondel');
         $orderPage = $paymentPage->goToNextStep();
 
-        // TODO: where to check it?
         $orderPage->validateUserBillingAddress(array_merge($addressData, $userData, $userLoginData));
         $orderPage->validateUserDeliveryAddress($deliveryAddressData);
         $orderPage->validateRemarkText("remark text");

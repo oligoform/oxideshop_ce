@@ -22,13 +22,6 @@ class ReviewAndRatingCest
         $productNavigation = new ProductNavigation($I);
         $I->wantToTest('user account top menu (popup in top of the page)');
 
-        //TODO: Do we need this here?
-
-        //if (isSUBSHOP) {
-        //    $this->executeSql("UPDATE `oxrecommlists` SET `OXSHOPID` = ".oxSHOPID."  WHERE 1");
-        //    $this->executeSql("UPDATE `oxratings` SET `OXSHOPID` = ".oxSHOPID."  WHERE 1");
-        //}
-
         $userData = $this->getExistingUserData();
         $userReviewText = 'user review [EN] šÄßüл for product 1000';
         $userRating = '3';

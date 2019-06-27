@@ -175,7 +175,6 @@ class GiftRegistryCest
 
         $userData = $this->getExistingUserData();
 
-        //TODO: does it work with shared sessions
         $start->loginOnStartPage($userData['userLoginName'], $userData['userPassword']);
 
         //open details page

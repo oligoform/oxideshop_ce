@@ -13,7 +13,7 @@ class ProductInfoFrontendTest extends FrontendTestCase
 {
     /**
      * Check is Compare options works corectly
-     *TODO: do not exists in flow
+     *TODO: bug in flow theme: #6979
      *
      * @group product
      */
