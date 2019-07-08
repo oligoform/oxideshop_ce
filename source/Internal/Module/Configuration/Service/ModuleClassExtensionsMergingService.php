@@ -16,11 +16,14 @@ use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\ShopConfi
  */
 class ModuleClassExtensionsMergingService implements ModuleClassExtensionsMergingServiceInterface
 {
+
     /**
      * @param ShopConfiguration   $shopConfiguration
      * @param ModuleConfiguration $moduleConfiguration
      *
      * @return ClassExtensionsChain
+     * @throws \OxidEsales\EshopCommunity\Internal\Adapter\Exception\ModuleConfigurationNotFoundException
+     * @throws \OxidEsales\EshopCommunity\Internal\Module\Configuration\Exception\ExtensionNotInChainException
      */
     public function merge(
         ShopConfiguration $shopConfiguration,
@@ -28,8 +31,12 @@ class ModuleClassExtensionsMergingService implements ModuleClassExtensionsMergin
     ): ClassExtensionsChain {
         $classExtensionChain = $shopConfiguration->getClassExtensionsChain();
 
-        if ($moduleConfiguration->hasSetting(ModuleSetting::CLASS_EXTENSIONS)) {
-            $classExtensionsToMerge = $moduleConfiguration->getSetting(ModuleSetting::CLASS_EXTENSIONS)->getValue();
+        if ($moduleConfiguration->hasClassExtensionSetting()) {
+            $classExtensionsToMerge = [];
+
+            foreach ($moduleConfiguration->getClassExtensions() as $extension) {
+                $classExtensionsToMerge [$extension->getShopClassNamespace()] = $extension->getModuleExtensionClassNamespace();
+            }
 
             if ($shopConfiguration->hasModuleConfiguration($moduleConfiguration->getId())) {
                 $existingModuleConfiguration = $shopConfiguration->getModuleConfiguration($moduleConfiguration->getId());
@@ -40,7 +47,11 @@ class ModuleClassExtensionsMergingService implements ModuleClassExtensionsMergin
                     $classExtensionChain
                 );
             } else {
-                $classExtensionChain->addExtensions($classExtensionsToMerge);
+                $extensions = [];
+                foreach ($moduleConfiguration->getClassExtensions() as $extension) {
+                    $extensions [$extension->getShopClassNamespace()] = $extension->getModuleExtensionClassNamespace();
+                }
+                $classExtensionChain->addExtensions($extensions);
             }
         }
 
@@ -53,31 +64,31 @@ class ModuleClassExtensionsMergingService implements ModuleClassExtensionsMergin
      * @param ClassExtensionsChain $chain
      *
      * @return ClassExtensionsChain
+     * @throws \OxidEsales\EshopCommunity\Internal\Module\Configuration\Exception\ExtensionNotInChainException
      */
     private function compareClassExtensionsAndUpdateChain(
         ModuleConfiguration $existingModuleConfiguration,
         array $classExtensionsToMerge,
         ClassExtensionsChain $chain
     ): ClassExtensionsChain {
-        if ($existingModuleConfiguration->hasSetting(ModuleSetting::CLASS_EXTENSIONS)) {
+        if ($existingModuleConfiguration->hasClassExtensionSetting()) {
             $classExtensionsOfExistingModuleConfiguration = $existingModuleConfiguration
-                ->getSetting(ModuleSetting::CLASS_EXTENSIONS)
-                ->getValue();
+                ->getClassExtensions();
             $classExtensionChain = $chain->getChain();
-            foreach ($classExtensionsOfExistingModuleConfiguration as $extended => $extension) {
-                if (\array_key_exists($extended, $classExtensionsToMerge)) {
-                    if ($classExtensionsOfExistingModuleConfiguration[$extended] !== $classExtensionsToMerge[$extended]) {
-                        $classExtensionChain[$extended] = $this->replaceExtendedClassAndKeepOrder(
-                            $classExtensionsOfExistingModuleConfiguration[$extended],
-                            $classExtensionsToMerge[$extended],
-                            $classExtensionChain[$extended]
+            foreach ($classExtensionsOfExistingModuleConfiguration as $extension) {
+                if (\array_key_exists($extension->getShopClassNamespace(), $classExtensionsToMerge)) {
+                    if ($extension->getModuleExtensionClassNamespace() !== $classExtensionsToMerge[$extension->getShopClassNamespace()]) {
+                        $classExtensionChain[$extension->getShopClassNamespace()] = $this->replaceExtendedClassAndKeepOrder(
+                            $extension->getModuleExtensionClassNamespace(),
+                            $classExtensionsToMerge[$extension->getShopClassNamespace()],
+                            $classExtensionChain[$extension->getShopClassNamespace()]
                         );
                         $chain->setChain($classExtensionChain);
                     }
                 } else {
-                    $chain->removeExtension($extended, $extension);
+                    $chain->removeExtension($extension->getShopClassNamespace(), $extension->getModuleExtensionClassNamespace());
                 }
-                unset($classExtensionsToMerge[$extended]);
+                unset($classExtensionsToMerge[$extension->getShopClassNamespace()]);
             }
         }
         $chain->addExtensions($classExtensionsToMerge);

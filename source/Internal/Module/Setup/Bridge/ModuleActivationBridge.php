@@ -41,6 +41,8 @@ class ModuleActivationBridge implements ModuleActivationBridgeInterface
     /**
      * @param string $moduleId
      * @param int    $shopId
+     *
+     * @throws \OxidEsales\EshopCommunity\Internal\Module\Setup\Exception\ModuleSetupException
      */
     public function activate(string $moduleId, int $shopId)
     {
@@ -51,6 +53,8 @@ class ModuleActivationBridge implements ModuleActivationBridgeInterface
     /**
      * @param string $moduleId
      * @param int    $shopId
+     *
+     * @throws \OxidEsales\EshopCommunity\Internal\Module\Setup\Exception\ModuleSetupException
      */
     public function deactivate(string $moduleId, int $shopId)
     {

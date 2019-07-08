@@ -7,10 +7,8 @@
 namespace OxidEsales\EshopCommunity\Internal\Module\Setup\Service;
 
 use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\ModuleConfiguration;
-use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\ModuleSetting;
 use OxidEsales\EshopCommunity\Internal\Module\Setup\Handler\ModuleConfigurationHandlerInterface;
 use OxidEsales\EshopCommunity\Internal\Module\Setup\Validator\ModuleConfigurationValidatorInterface;
-
 /**
  * @internal
  */
@@ -24,7 +22,7 @@ class ModuleConfigurationHandlingService implements ModuleConfigurationHandlingS
     /**
      * @var ModuleConfigurationValidatorInterface[]
      */
-    private $moduleConfigurationValidator = [];
+    private $moduleConfigurationValidators = [];
 
     /**
      * @param ModuleConfiguration $moduleConfiguration
@@ -63,7 +61,7 @@ class ModuleConfigurationHandlingService implements ModuleConfigurationHandlingS
      */
     public function addValidator(ModuleConfigurationValidatorInterface $configuration)
     {
-        $this->moduleConfigurationValidator[] = $configuration;
+        $this->moduleConfigurationValidators[] = $configuration;
     }
 
     /**
@@ -72,12 +70,8 @@ class ModuleConfigurationHandlingService implements ModuleConfigurationHandlingS
      */
     private function validateModuleConfiguration(ModuleConfiguration $moduleConfiguration, int $shopId)
     {
-        foreach ($moduleConfiguration->getSettings() as $setting) {
-            foreach ($this->moduleConfigurationValidator as $validator) {
-                if ($moduleConfiguration->hasSetting($setting->getName())) {
-                    $validator->validate($moduleConfiguration, $shopId);
-                }
-            }
+        foreach ($this->moduleConfigurationValidators as $moduleConfigurationValidator) {
+            $moduleConfigurationValidator->validate($moduleConfiguration, $shopId);
         }
     }
 }

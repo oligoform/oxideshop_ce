@@ -39,12 +39,16 @@ class ClassExtensionsModuleSettingHandler implements ModuleConfigurationHandlerI
     public function handleOnModuleActivation(ModuleConfiguration $configuration, int $shopId)
     {
         if ($this->canHandle($configuration)) {
-            $moduleSetting = $configuration->getSetting(ModuleSetting::CLASS_EXTENSIONS);
+            $classExtensions=[];
+
+            foreach ($configuration->getClassExtensions() as $extension) {
+                $classExtensions[$extension->getShopClassNamespace()] = $extension->getModuleExtensionClassNamespace();
+            }
 
             $shopConfigurationSetting = $this->getClassExtensionsShopConfigurationSetting($shopId);
 
             $shopConfigurationSettingValue = $shopConfigurationSetting->getValue();
-            $shopConfigurationSettingValue[$configuration->getId()] = array_values($moduleSetting->getValue());
+            $shopConfigurationSettingValue[$configuration->getId()] = array_values($classExtensions);
 
             $shopConfigurationSetting->setValue($shopConfigurationSettingValue);
 
@@ -76,7 +80,7 @@ class ClassExtensionsModuleSettingHandler implements ModuleConfigurationHandlerI
      */
     private function canHandle(ModuleConfiguration $configuration): bool
     {
-        return $configuration->hasSetting(ModuleSetting::CLASS_EXTENSIONS);
+        return $configuration->hasClassExtensionSetting();
     }
 
     /**

@@ -33,7 +33,7 @@ class ModuleExtensionsCleaner
      */
     public function cleanExtensions($installedExtensions, \OxidEsales\Eshop\Core\Module\Module $module)
     {
-        $moduleExtensions = $module->getExtensions();
+        $moduleExtensions= $module->getExtensions();
 
         $installedModuleExtensions = $this->filterExtensionsByModuleId($installedExtensions, $module->getId());
 
