@@ -8,6 +8,7 @@ namespace OxidEsales\EshopCommunity\Tests\Unit\Internal\Module\Setup\Handler;
 
 use OxidEsales\EshopCommunity\Internal\Adapter\Configuration\Dao\ShopConfigurationSettingDaoInterface;
 use OxidEsales\EshopCommunity\Internal\Adapter\Configuration\DataObject\ShopConfigurationSetting;
+use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataMapper\ModuleConfigurationMappingKeys;
 use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\ModuleConfiguration;
 use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\ModuleSetting;
 use OxidEsales\EshopCommunity\Internal\Module\Setup\Handler\ControllersModuleSettingHandler;
@@ -28,7 +29,7 @@ class ControllersModuleSettingHandlerTest extends TestCase
         $settingHandler = new ControllersModuleSettingHandler($shopConfigurationSettingDaoMock);
 
         $moduleSetting = new ModuleSetting(
-            ModuleSetting::CONTROLLERS,
+            ModuleConfigurationMappingKeys::CONTROLLERS,
             [
                     'firstControllerNewModule'  => \NewModule\FirstClass::class,
                     'secondControllerNewModule' => \NewModule\SecondClass::class,
@@ -71,7 +72,7 @@ class ControllersModuleSettingHandlerTest extends TestCase
         $moduleConfiguration = new ModuleConfiguration();
         $moduleConfiguration
             ->setId('newmodule')
-            ->addSetting(new ModuleSetting(ModuleSetting::CONTROLLERS, []));
+            ->addSetting(new ModuleSetting(ModuleConfigurationMappingKeys::CONTROLLERS, []));
 
         $settingHandler->handleOnModuleActivation($moduleConfiguration, 1);
 
@@ -109,7 +110,7 @@ class ControllersModuleSettingHandlerTest extends TestCase
         $moduleConfiguration = new ModuleConfiguration();
         $moduleConfiguration
             ->setId('existingmodule')
-            ->addSetting(new ModuleSetting(ModuleSetting::CONTROLLERS, []));
+            ->addSetting(new ModuleSetting(ModuleConfigurationMappingKeys::CONTROLLERS, []));
 
         $settingHandler->handleOnModuleDeactivation($moduleConfiguration, 1);
 

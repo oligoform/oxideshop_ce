@@ -9,10 +9,8 @@ namespace OxidEsales\EshopCommunity\Internal\Module\Setup\Handler;
 use OxidEsales\EshopCommunity\Internal\Adapter\Configuration\Dao\ShopConfigurationSettingDaoInterface;
 use OxidEsales\EshopCommunity\Internal\Adapter\Configuration\DataObject\ShopConfigurationSetting;
 use OxidEsales\EshopCommunity\Internal\Adapter\Configuration\DataObject\ShopSettingType;
-use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\ModuleSetting;
 use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\ModuleConfiguration;
 use OxidEsales\EshopCommunity\Internal\Common\Exception\EntryDoesNotExistDaoException;
-
 /**
  * @internal
  */
@@ -42,12 +40,11 @@ class ControllersModuleSettingHandler implements ModuleConfigurationHandlerInter
     {
         if ($this->canHandle($configuration)) {
             $shopControllers = $this->getShopControllers($shopId);
-            $setting = $configuration->getSetting(ModuleSetting::CONTROLLERS);
 
             $shopSettingValue = array_merge(
                 $shopControllers->getValue(),
                 [
-                    strtolower($configuration->getId()) => $this->controllerKeysToLowercase($setting->getValue()),
+                    strtolower($configuration->getId()) => $this->controllerKeysToLowercase($configuration->getControllers()),
                 ]
             );
 
@@ -81,7 +78,7 @@ class ControllersModuleSettingHandler implements ModuleConfigurationHandlerInter
      */
     private function canHandle(ModuleConfiguration $configuration): bool
     {
-        return $configuration->hasSetting(ModuleSetting::CONTROLLERS);
+        return $configuration->hasControllerSetting();
     }
 
     /**
@@ -110,7 +107,7 @@ class ControllersModuleSettingHandler implements ModuleConfigurationHandlerInter
     /**
      * Change the controller keys to lower case.
      *
-     * @param array $controllers The controllers array of one module.
+     * @param array $controllers
      *
      * @return array The given controllers array with the controller keys in lower case.
      */
@@ -118,8 +115,8 @@ class ControllersModuleSettingHandler implements ModuleConfigurationHandlerInter
     {
         $result = [];
 
-        foreach ($controllers as $controllerKey => $controllerClass) {
-            $result[strtolower($controllerKey)] = $controllerClass;
+        foreach ($controllers as $controller) {
+            $result[strtolower($controller->getId())] = $controller->getControllerClassNameSpace();
         }
 
         return $result;

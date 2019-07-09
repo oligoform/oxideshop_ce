@@ -13,8 +13,8 @@ use OxidEsales\EshopCommunity\Internal\Adapter\Configuration\DataObject\ShopConf
 use OxidEsales\EshopCommunity\Internal\Adapter\ShopAdapterInterface;
 use OxidEsales\EshopCommunity\Internal\Common\Exception\EntryDoesNotExistDaoException;
 use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\ModuleConfiguration;
-use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\ModuleSetting;
 use OxidEsales\EshopCommunity\Internal\Module\Setup\Exception\ControllersDuplicationModuleConfigurationException;
+use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\ModuleConfiguration\Controller;
 
 /**
  * @internal
@@ -52,8 +52,7 @@ class ControllersValidator implements ModuleConfigurationValidatorInterface
      */
     public function validate(ModuleConfiguration $configuration, int $shopId)
     {
-        if ($configuration->hasSetting(ModuleSetting::CONTROLLERS)) {
-            $moduleSetting = $configuration->getSetting(ModuleSetting::CONTROLLERS);
+        if ($configuration->hasControllerSetting()) {
 
             $shopControllerClassMap = $this->shopAdapter->getShopControllerClassMap();
 
@@ -62,8 +61,10 @@ class ControllersValidator implements ModuleConfigurationValidatorInterface
                 $this->getModulesControllerClassMap($shopId)
             );
 
-            $this->validateForControllerKeyDuplication($moduleSetting, $controllerClassMap);
-            $this->validateForControllerNamespaceDuplication($moduleSetting, $controllerClassMap);
+            $controllers = $this->convertControllerObjectToArray($configuration->getControllers());
+
+            $this->validateForControllerKeyDuplication($controllers, $controllerClassMap);
+            $this->validateForControllerNamespaceDuplication($controllers, $controllerClassMap);
         }
     }
 
@@ -92,15 +93,15 @@ class ControllersValidator implements ModuleConfigurationValidatorInterface
     }
 
     /**
-     * @param ModuleSetting $moduleSetting
-     * @param array         $controllerClassMap
+     * @param Controller[] $controllers
+     * @param array $controllerClassMap
      *
      * @throws ControllersDuplicationModuleConfigurationException
      */
-    private function validateForControllerNamespaceDuplication(ModuleSetting $moduleSetting, array $controllerClassMap)
+    private function validateForControllerNamespaceDuplication(array $controllers, array $controllerClassMap)
     {
         $duplications = array_intersect(
-            $moduleSetting->getValue(),
+            $controllers,
             $controllerClassMap
         );
 
@@ -112,15 +113,15 @@ class ControllersValidator implements ModuleConfigurationValidatorInterface
     }
 
     /**
-     * @param ModuleSetting $moduleSetting
-     * @param array         $controllerClassMap
+     * @param Controller[] $controllers
+     * @param array $controllerClassMap
      *
      * @throws ControllersDuplicationModuleConfigurationException
      */
-    private function validateForControllerKeyDuplication(ModuleSetting $moduleSetting, array $controllerClassMap)
+    private function validateForControllerKeyDuplication(array $controllers, array $controllerClassMap)
     {
         $duplications = array_intersect_key(
-            $this->arrayKeysToLowerCase($moduleSetting->getValue()),
+            $this->arrayKeysToLowerCase($controllers),
             $controllerClassMap
         );
 
@@ -138,5 +139,21 @@ class ControllersValidator implements ModuleConfigurationValidatorInterface
     private function arrayKeysToLowerCase(array $array): array
     {
         return array_change_key_case($array, CASE_LOWER);
+    }
+
+    /**
+     * @param Controller[] $controllers
+     *
+     * @return array
+     */
+    private function convertControllerObjectToArray(array $controllers): array
+    {
+        $output = [];
+
+        foreach ($controllers as $controller) {
+            $output [$controller->getId()] = $controller->getControllerClassNameSpace();
+        }
+
+        return $output;
     }
 }
