@@ -1,0 +1,30 @@
+<?php
+
+namespace OxidEsales\EshopCommunity\Tests\Unit\Internal\Twig\Extensions;
+
+use OxidEsales\Eshop\Core\Registry;
+use Twig\Environment;
+use Twig\Extension\AbstractExtension;
+use Twig\Loader\ArrayLoader;
+
+abstract class AbstractExtensionTest extends \PHPUnit\Framework\TestCase
+{
+    /** @var AbstractExtension */
+    protected $extension;
+
+    /**
+     * @param string $template
+     *
+     * @return \Twig_Template
+     */
+    protected function getTemplate(string $template): \Twig_Template
+    {
+        $loader = new ArrayLoader(['index' => $template]);
+
+        $twig = new Environment($loader, ['debug' => true, 'cache' => false]);
+        $twig->addExtension($this->extension);
+
+        return $twig->loadTemplate('index');
+    }
+
+}

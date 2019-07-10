@@ -34,7 +34,7 @@ interface TemplateEngineInterface
     /**
      * Renders a template.
      *
-     * @param string $name       A template name
+     * @param string $name    A template name
      * @param array  $context An array of parameters to pass to the template
      *
      * @return string The evaluated template as a string
