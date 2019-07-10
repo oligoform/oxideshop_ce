@@ -6,7 +6,7 @@
 
 namespace OxidEsales\EshopCommunity\Internal\Templating;
 
-use OxidEsales\Eshop\Core\Exception\SystemComponentException;
+use OxidEsales\EshopCommunity\Internal\Templating\Exception\TemplateFileNotFoundException;
 
 /**
  * Class TemplateLoader
@@ -49,7 +49,7 @@ class TemplateLoader implements TemplateLoaderInterface
     {
         try {
             $this->findTemplate($name);
-        } catch (SystemComponentException $e) {
+        } catch (TemplateFileNotFoundException $e) {
             return false;
         }
         return true;
@@ -62,7 +62,7 @@ class TemplateLoader implements TemplateLoaderInterface
      *
      * @return string
      *
-     * @throws SystemComponentException
+     * @throws TemplateFileNotFoundException
      */
     public function getContext($name): string
     {
@@ -78,7 +78,7 @@ class TemplateLoader implements TemplateLoaderInterface
      *
      * @return string
      *
-     * @throws SystemComponentException
+     * @throws TemplateFileNotFoundException
      */
     public function getPath($name): string
     {
@@ -90,7 +90,7 @@ class TemplateLoader implements TemplateLoaderInterface
      *
      * @return string
      *
-     * @throws SystemComponentException
+     * @throws TemplateFileNotFoundException
      */
     private function findTemplate($name): string
     {
@@ -98,11 +98,7 @@ class TemplateLoader implements TemplateLoaderInterface
         $file = $this->fileLocator->locate($templateName);
 
         if (false === $file || null === $file || '' === $file) {
-            $ex = oxNew(SystemComponentException::class);
-            $ex->setMessage('EXCEPTION_SYSTEMCOMPONENT_TEMPLATENOTFOUND' . ' ' . $name);
-            $ex->setComponent($name);
-
-            throw $ex;
+            throw new TemplateFileNotFoundException(sprintf('Template "%s" not found', $name));
         }
         return $file;
     }

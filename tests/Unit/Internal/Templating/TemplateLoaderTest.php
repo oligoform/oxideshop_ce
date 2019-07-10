@@ -7,7 +7,7 @@
 namespace OxidEsales\EshopCommunity\Tests\Unit\Internal\Templating;
 
 use org\bovigo\vfs\vfsStream;
-use OxidEsales\EshopCommunity\Core\Exception\SystemComponentException;
+use OxidEsales\EshopCommunity\Internal\Templating\Exception\TemplateFileNotFoundException;
 use OxidEsales\EshopCommunity\Internal\Templating\TemplateFileLocatorInterface;
 use OxidEsales\EshopCommunity\Internal\Templating\TemplateLoader;
 use OxidEsales\EshopCommunity\Internal\Templating\TemplateNameResolverInterface;
@@ -70,7 +70,7 @@ class TemplateLoaderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPathIfTemplateDoNotExits()
     {
-        $this->expectException(SystemComponentException::class);
+        $this->expectException(TemplateFileNotFoundException::class);
         $name = 'not_existing_template.tpl';
         $locator = $this->getFileLocatorMock(false);
         $nameResolver = $this->getTemplateNameResolverMock($name);
